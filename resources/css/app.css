@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.fi-ta-text{
+    justify-content: flex-start;
+}
+:is(.dark .dark\:bg-gray-900) {
+
+    background-color: #18181b!important;
+}
