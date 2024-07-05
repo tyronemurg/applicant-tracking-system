@@ -19,14 +19,17 @@
         </x-slot>
         <x-filament::dropdown.list>
             @foreach($resources as $resource)
-                <x-filament::dropdown.list.item
-                    :icon="$resource['icon']"
-                    :wire:click="$resource['action']"
-                    :href="$resource['url']"
-                    :tag="$resource['url'] ? 'a' : 'button'"
-                >
-                    {{ $resource['label'] }}
-                </x-filament::dropdown.list.item>
+                @if(auth()->user()->hasRole('super_admin') && in_array($resource['label'], ['Job openings', 'Job candidates', 'Departments', 'User', 'Roles', 'Permission']) || 
+                    (auth()->user()->hasRole('admin') && in_array($resource['label'], ['Job openings', 'Job candidates', 'Departments'])))
+                    <x-filament::dropdown.list.item
+                        :icon="$resource['icon']"
+                        :wire:click="$resource['action']"
+                        :href="$resource['url']"
+                        :tag="$resource['url'] ? 'a' : 'button'"
+                    >
+                        {{ $resource['label'] }}
+                    </x-filament::dropdown.list.item>
+                @endif
             @endforeach
         </x-filament::dropdown.list>
     </x-filament::dropdown>
