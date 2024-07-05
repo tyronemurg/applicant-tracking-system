@@ -243,6 +243,7 @@ class JobCandidatesResource extends Resource
                 ->html(),
                 
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
