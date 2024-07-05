@@ -143,11 +143,11 @@ class JobOpeningsResource extends Resource
                             ->label('Job Description')
                             ->required(),
                         RichEditor::make('JobRequirement')
-                            ->label('Requirements')
-                            ->required(),
+                            ->label('Requirements'),
+                           // ->required(),
                         RichEditor::make('JobBenefits')
-                            ->label('Benefits')
-                            ->required(),
+                            ->label('Benefits'),
+                          //  ->required(),
                         RichEditor::make('AdditionalNotes')
                             ->hintIcon('heroicon-o-information-circle', tooltip: 'This field will display in the career job portal')
                             ->label('Additional Notes')
