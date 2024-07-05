@@ -131,6 +131,7 @@ class CareerApplyJob extends Component implements HasActions, HasForms
             'current_salary' => $data['current_salary'],
             'salary_expectations' => $data['salary_expectations'],
             'notice_period' => $data['notice_period'],
+            'CreatedBy' => $this->record->CreatedBy,
         ]);
 
              // Handle file upload manually
