@@ -142,7 +142,8 @@ class RoleResource extends Resource implements HasShieldPermissions
 
     public static function getModelLabel(): string
     {
-        return __('filament-shield::filament-shield.resource.label.role');
+       // return __('filament-shield::filament-shield.resource.label.role');
+       return __('Roles');
     }
 
     public static function getPluralModelLabel(): string

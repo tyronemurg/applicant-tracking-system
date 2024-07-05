@@ -52,6 +52,10 @@ class SpatieRoleResource extends Resource
         }
     }
     
+    public static function getModelLabel(): string
+    {
+        return __('Spatie Role');
+    }
 
     public static function getPages(): array
     {
