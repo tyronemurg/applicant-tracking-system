@@ -95,10 +95,10 @@ class JobOpeningsResource extends Resource
                         Select::make('Department')
                             ->options($departmentOptions)
                             ->required(),
-                        Select::make('HiringManager')
-                            ->options(User::all()->pluck('name', 'id')),
-                        Select::make('AssignedRecruiters')
-                            ->options(User::all()->pluck('name', 'id')),
+                        // Select::make('HiringManager')
+                        //     ->options(User::all()->pluck('name', 'id')),
+                        // Select::make('AssignedRecruiters')
+                        //     ->options(User::all()->pluck('name', 'id')),
                         DatePicker::make('DateOpened')
                             ->label('Date Opened')
                             ->format('d/m/Y')
@@ -108,9 +108,9 @@ class JobOpeningsResource extends Resource
                         Select::make('JobType')
                             ->options(config('recruit.job_opening.job_type_options'))
                             ->required(),
-                        Select::make('RequiredSkill')
-                            ->multiple()
-                            ->options(self::$requiredSkills),
+                        // Select::make('RequiredSkill')
+                        //     ->multiple()
+                        //     ->options(self::$requiredSkills),
                             //->required(),
                         Select::make('WorkExperience')
                             ->options(config('recruit.job_opening.work_experience'))
