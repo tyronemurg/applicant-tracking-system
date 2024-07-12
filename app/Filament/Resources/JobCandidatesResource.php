@@ -74,10 +74,10 @@ class JobCandidatesResource extends Resource
                     Forms\Components\TextInput::make('CandidateSource')
                         ->nullable('')
                         ->default('web'),
-                    Forms\Components\Select::make('CandidateOwner')
-                        ->label('Candidate Owner')
-                        ->options(User::all()->pluck('name', 'id'))
-                        ->nullable(),
+                    // Forms\Components\Select::make('CandidateOwner')
+                    //     ->label('Candidate Owner')
+                    //     ->options(User::all()->pluck('name', 'id'))
+                    //     ->nullable(),
                 ])->columns(2),
         ];
     }
