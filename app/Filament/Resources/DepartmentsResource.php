@@ -39,9 +39,9 @@ class DepartmentsResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('DepartmentName')
                             ->required(),
-                        Forms\Components\Select::make('ParentDepartment')
-                            ->options(Departments::all()->pluck('DepartmentName', 'id'))
-                            ->nullable(),
+                        // Forms\Components\Select::make('ParentDepartment')
+                        //     ->options(Departments::all()->pluck('DepartmentName', 'id'))
+                        //     ->nullable(),
                     ]),
                 Forms\Components\Section::make('System Information')
                     ->hiddenOn('create')
