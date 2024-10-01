@@ -15,6 +15,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TextArea;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -24,6 +25,9 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
 use Auth;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Carbon\Carbon; 
+use Illuminate\Support\Facades\URL;
 
 
 class JobOpeningsResource extends Resource
@@ -79,6 +83,21 @@ class JobOpeningsResource extends Resource
                             ->label('Job Opening Unique Key ID')
                             ->readOnly()
                             ->hiddenOn('create'),
+                            // Job URL using placeholder to show the structure
+                TextInput::make('JobURL')
+                ->label('Job URL')
+                ->readonly() // Make it read-only
+                ->placeholder(URL::to('/career/job/apply/')) // Base URL
+
+                // Set the value dynamically in the view or controller
+                ->afterStateHydrated(function ($component, $state) {
+                    $jobOpeningId = $component->getRecord()->JobOpeningSystemID ?? '';
+                    if ($jobOpeningId) {
+                        // Using URL helper to build the full URL dynamically with the correct slash
+                        $baseUrl = URL::to('/career/job/apply/');
+                        $component->state($baseUrl . '/' . $jobOpeningId); // Add a slash before appending the ID
+                    }
+                }),
                         DatePicker::make('TargetDate')
                             ->label('Target Date')
                             ->format('d/m/Y')
@@ -139,19 +158,23 @@ class JobOpeningsResource extends Resource
                     ->icon('heroicon-o-briefcase')
                     ->label('Description Information')
                     ->schema([
-                        RichEditor::make('JobDescription')
-                            ->label('Job Description')
-                            ->required(),
-                        RichEditor::make('JobRequirement')
-                            ->label('Requirements'),
-                           // ->required(),
-                        RichEditor::make('JobBenefits')
-                            ->label('Benefits'),
-                          //  ->required(),
-                        RichEditor::make('AdditionalNotes')
-                            ->hintIcon('heroicon-o-information-circle', tooltip: 'This field will display in the career job portal')
-                            ->label('Additional Notes')
-                            ->nullable(),
+                        Textarea::make('JobDescription')
+                        ->label('Job Description')
+                        ->required()
+                        ->rows(4),
+                        Textarea::make('JobRequirement')
+                                    ->label('Requirements')
+                                   // ->required(),
+                                   ->rows(4),
+                                   Textarea::make('JobBenefits')
+                                    ->label('Benefits')
+                                    ->rows(4),
+                                  //  ->required(),
+                                  Textarea::make('AdditionalNotes')
+                                    ->hintIcon('heroicon-o-information-circle', tooltip: 'This field will display in the career job portal')
+                                    ->label('Additional Notes')
+                                    ->nullable()
+                                    ->rows(4),
                     ])->columns(1),
                 Section::make('System Information')
                     ->hiddenOn(['create', 'edit'])
@@ -197,6 +220,47 @@ class JobOpeningsResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('download_csv') // New action for CSV download
+                    ->label('Download CSV')
+                    ->icon('heroicon-o-check-badge')
+                    ->action(function (JobOpenings $record) {
+                        return new StreamedResponse(function () use ($record) {
+                            $handle = fopen('php://output', 'w');
+            
+                            // Add CSV headers, including Job Description
+                            fputcsv($handle, [
+                                'Posting Title',
+                                'Number of Position',
+                                'Job Title',
+                                'Target Date',
+                                'Date Opened',
+                                'Job Type',
+                                'Remote Job',
+                                'Job Description', // New column for Job Description
+                            ]);
+            
+                            // Convert date fields to Carbon instances using the correct format
+                            $targetDate = Carbon::createFromFormat('d/m/Y', $record->TargetDate);
+                            $dateOpened = Carbon::createFromFormat('d/m/Y', $record->DateOpened);
+            
+                            // Add job opening data, including Job Description
+                            fputcsv($handle, [
+                                $record->postingTitle,
+                                $record->NumberOfPosition,
+                                $record->JobTitle,
+                                $targetDate->format('d/m/Y'), // Format the date as needed
+                                $dateOpened->format('d/m/Y'),
+                                $record->JobType,
+                                $record->RemoteJob ? 'Yes' : 'No',
+                                $record->JobDescription, // New entry for Job Description
+                            ]);
+            
+                            fclose($handle);
+                        }, 200, [
+                            'Content-Type' => 'text/csv',
+                            'Content-Disposition' => 'attachment; filename="' . $record->JobTitle . '_job_opening.csv"',
+                        ]);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
