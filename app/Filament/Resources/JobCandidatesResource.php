@@ -66,6 +66,7 @@ class JobCandidatesResource extends Resource
                     Forms\Components\Select::make('JobId')
                         ->label('Job Associated')
                         ->options(JobOpenings::all()->pluck('JobTitle', 'id'))
+                        ->disabled()
                         ->required(),
                     Forms\Components\Select::make('CandidateStatus')
                         ->label('Candidate Status')
@@ -74,11 +75,18 @@ class JobCandidatesResource extends Resource
                     Forms\Components\TextInput::make('CandidateSource')
                         ->nullable('')
                         ->default('web'),
+                        Forms\Components\Select::make('JobId')
+                        ->label('Job Description')
+                        ->options(JobOpenings::all()->pluck('JobDescription', 'id'))
+                        ->disabled()
+                        ->extraAttributes([
+                            'style' => 'appearance: none!important; background: none; border: none; padding: 0; width: 100%; height: auto; cursor: default; font-size: inherit; font-family: inherit; line-height: inherit; resize: none; box-shadow: none; outline: none;',
+                        ])
                     // Forms\Components\Select::make('CandidateOwner')
                     //     ->label('Candidate Owner')
                     //     ->options(User::all()->pluck('name', 'id'))
                     //     ->nullable(),
-                ])->columns(2),
+                ])->columns(1),
         ];
     }
 
@@ -241,6 +249,10 @@ class JobCandidatesResource extends Resource
                     })->join(', ');
                 })
                 ->html(),
+                Tables\Columns\TextColumn::make('job.JobTitle')
+                ->label('Job Opening')
+                ->sortable()
+                ->searchable(),
                 
             ])
             ->defaultSort('created_at', 'desc')
